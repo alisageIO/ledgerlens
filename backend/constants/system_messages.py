@@ -13,3 +13,4 @@ INTERNAL_ERROR = "An unexpected error occurred"
 
 CURRENCY_MISMATCH = "Cannot combine amounts in different currencies"
 CATEGORY_CYCLE = "This change would make a category its own ancestor"
+EMPTY_PASSWORD = "Password must not be empty"
