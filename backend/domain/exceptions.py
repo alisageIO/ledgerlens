@@ -38,5 +38,3 @@ class EmptyPasswordError(DomainError):
 
 class DuplicateEmailError(DomainError):
     """Raised when registration is attempted with an email that's already taken."""
-
-

@@ -65,6 +65,7 @@ def test_hash_password_72_bytes_succeeds() -> None:
 
 def test_hash_password_above_72_bytes_raises_validation_error() -> None:
     from domain.exceptions import ValidationError
+
     password = "a" * 73
     with pytest.raises(ValidationError) as exc_info:
         hash_password(password)
@@ -73,8 +74,8 @@ def test_hash_password_above_72_bytes_raises_validation_error() -> None:
 
 def test_verify_password_above_72_bytes_raises_validation_error() -> None:
     from domain.exceptions import ValidationError
+
     password = "a" * 73
     with pytest.raises(ValidationError) as exc_info:
         verify_password(password, "some_hash")
     assert "Password must not exceed 72 bytes" in str(exc_info.value)
-

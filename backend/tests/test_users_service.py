@@ -75,9 +75,10 @@ def test_create_and_verify_never_logs_raw_password(
 
 
 def test_create_user_duplicate_email_raises_duplicate_email_error(
-    user_service: UserService
+    user_service: UserService,
 ) -> None:
     from domain.exceptions import DuplicateEmailError
+
     email = "duplicate@example.com"
     user_service.create_user(email=email, password="password123")
 
@@ -91,9 +92,9 @@ def test_user_repr_omits_email() -> None:
     import uuid
 
     from domain.users.models import User
+
     user_id = uuid.uuid4()
     user = User(id=user_id, email="secret@example.com", password_hash="hash")
     representation = repr(user)
     assert "secret@example.com" not in representation
     assert str(user_id) in representation
-

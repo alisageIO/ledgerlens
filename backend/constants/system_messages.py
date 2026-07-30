@@ -16,4 +16,3 @@ CATEGORY_CYCLE = "This change would make a category its own ancestor"
 EMPTY_PASSWORD = "Password must not be empty"
 PASSWORD_TOO_LONG = "Password must not exceed 72 bytes"
 DUPLICATE_EMAIL = "An account with this email already exists"
-
