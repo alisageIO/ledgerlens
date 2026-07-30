@@ -27,16 +27,14 @@ def upgrade() -> None:
         )
 ```
 
-#### Downgrade (`down`) Guard
+#### Downgrade (`down`) Caution & Schema Ownership
 
-```python
-def downgrade() -> None:
-    bind = op.get_bind()
-    inspector = sa.inspect(bind)
+Unconditional downgrade guards (like dropping a table solely because it exists) create a critical mismatch if the `upgrade()` step skipped table creation because the table was pre-existing (e.g. created by test runs or legacy scripts). If a downgrade is subsequently run, it would drop a table it did not actually create or own, causing data loss or breaking other dependencies.
 
-    if "users" in inspector.get_table_names():
-        op.drop_table("users")
-```
+Therefore, migrations must establish explicit schema ownership:
+
+1. **Never drop objects unless you are certain they were created by this migration.**
+2. If pre-existing tables exist, resolve them via a separate preflight/repair migration or schema synchronization script before running subsequent migrations, rather than letting migrations silently record success for an inherited table.
 
 ### Why Option A over Raw SQL
 
