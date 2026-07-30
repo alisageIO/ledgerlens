@@ -17,8 +17,9 @@ class UserService:
         user = User(email=email, password_hash=hash_password(password))
         self.repository.session.add(user)
         try:
-            self.repository.session.commit()
+            self.repository.session.flush()
             self.repository.session.refresh(user)
+            self.repository.session.commit()
             return user
         except IntegrityError as exc:
             self.repository.session.rollback()
