@@ -1,0 +1,32 @@
+# Environment
+.env
+.env.local
+*.env
+!*.env.example
+
+# Backend (Python)
+backend/.venv/
+backend/__pycache__/
+**/__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+
+# Backend ML artifacts (trained models are committed deliberately per TRD §6 —
+# only caches/scratch output are ignored)
+backend/ml/reports/*.tmp
+
+# Web (Node/Next.js)
+web/node_modules/
+web/.next/
+web/out/
+web/next-env.d.ts
+web/*.tsbuildinfo
+
+# Editors / OS
+.DS_Store
+.vscode/
+.idea/

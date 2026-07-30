@@ -1,0 +1,71 @@
+[project]
+name = "ledgerlens-backend"
+version = "0.1.0"
+description = "LedgerLens API — FastAPI service (api, domain, ml, worker, agent)"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi==0.115.6",
+  "uvicorn[standard]>=0.32",
+  "pydantic>=2.9",
+  "pydantic-settings>=2.6",
+  "sqlalchemy>=2.0",
+  "alembic>=1.13",
+  "psycopg[binary]>=3.2",
+  "pyjwt>=2.9",
+  "passlib[bcrypt]>=1.7",
+  "python-multipart>=0.0.12",
+  "scikit-learn>=1.5",
+  "joblib>=1.4",
+]
+
+[dependency-groups]
+dev = [
+  "pytest>=8.3",
+  "pytest-asyncio>=0.24",
+  "pytest-cov>=6.0",
+  "httpx>=0.27",
+  "ruff>=0.7",
+  "mypy>=1.13",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+# ANN401 is the "no explicit Any" rule (CONTRIBUTING.md) — enforced by the
+# linter against our own source text, same as the TS project's
+# @typescript-eslint/no-explicit-any. mypy's equivalent type-checker flag
+# (disallow_any_explicit) was tried first and dropped: it fires on the
+# `class Foo(BaseSettings/BaseModel)` line itself for every Pydantic model,
+# a plugin interaction with pydantic.mypy that has nothing to do with Any in
+# our code, so it would flag every DTO/entity rather than actual violations.
+select = ["E", "F", "I", "UP", "B", "ANN401"]
+
+[tool.ruff.lint.per-file-ignores]
+# api.envelope wraps arbitrary, already-serialized JSON by design (the
+# response body of whatever endpoint it's wrapping) — the one honest
+# boundary where "no Any" can't hold, same as CONTRIBUTING.md's rule only
+# ever applying to DTOs/services/controllers/utilities, not interceptor-
+# level plumbing.
+"api/envelope.py" = ["ANN401"]
+
+[tool.mypy]
+python_version = "3.12"
+plugins = ["pydantic.mypy"]
+disallow_untyped_defs = true
+warn_unused_ignores = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.coverage.run]
+source = ["domain/money.py"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+include = ["api", "domain", "ml", "worker", "agent", "config", "constants"]
