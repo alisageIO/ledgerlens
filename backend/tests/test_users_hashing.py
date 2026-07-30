@@ -55,3 +55,26 @@ def test_hash_password_never_appears_in_exception_message() -> None:
         hash_password("")
     # Ensure empty string/sensitive input is not formatted into the exception
     assert str(exc_info.value) == "Password must not be empty"
+
+
+def test_hash_password_72_bytes_succeeds() -> None:
+    password = "a" * 72
+    hashed = hash_password(password)
+    assert verify_password(password, hashed) is True
+
+
+def test_hash_password_above_72_bytes_raises_validation_error() -> None:
+    from domain.exceptions import ValidationError
+    password = "a" * 73
+    with pytest.raises(ValidationError) as exc_info:
+        hash_password(password)
+    assert "Password must not exceed 72 bytes" in str(exc_info.value)
+
+
+def test_verify_password_above_72_bytes_raises_validation_error() -> None:
+    from domain.exceptions import ValidationError
+    password = "a" * 73
+    with pytest.raises(ValidationError) as exc_info:
+        verify_password(password, "some_hash")
+    assert "Password must not exceed 72 bytes" in str(exc_info.value)
+

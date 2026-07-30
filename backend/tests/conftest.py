@@ -17,10 +17,10 @@ def client() -> Iterator[TestClient]:
 
 @pytest.fixture
 def db_session() -> Iterator[Session]:
+    Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
     session = SessionLocal()
     try:
         yield session
-        session.rollback()
     finally:
         session.close()

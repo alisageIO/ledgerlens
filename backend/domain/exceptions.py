@@ -35,3 +35,8 @@ class ValidationError(DomainError):
 class EmptyPasswordError(DomainError):
     """Raised when an empty-string password reaches the hashing boundary (NFR-1.1)."""
 
+
+class DuplicateEmailError(DomainError):
+    """Raised when registration is attempted with an email that's already taken."""
+
+
