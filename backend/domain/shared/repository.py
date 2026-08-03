@@ -21,3 +21,15 @@ class AbstractRepository[ModelT: Base]:
 
     def get_by_id(self, id: UUID) -> ModelT | None:
         return self.session.get(self.model, id)
+
+    def add(self, entity: ModelT) -> ModelT:
+        """Persists a new entity: add, flush, refresh, commit; rolls back on failure."""
+        self.session.add(entity)
+        try:
+            self.session.flush()
+            self.session.refresh(entity)
+            self.session.commit()
+            return entity
+        except Exception:
+            self.session.rollback()
+            raise
