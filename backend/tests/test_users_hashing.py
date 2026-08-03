@@ -79,3 +79,10 @@ def test_verify_password_above_72_bytes_raises_validation_error() -> None:
     with pytest.raises(ValidationError) as exc_info:
         verify_password(password, "some_hash")
     assert "Password must not exceed 72 bytes" in str(exc_info.value)
+
+
+def test_verify_password_empty_string_raises_empty_password_error() -> None:
+    hashed = hash_password("s3cr3t!")
+    with pytest.raises(EmptyPasswordError) as exc_info:
+        verify_password("", hashed)
+    assert "Password must not be empty" in str(exc_info.value)

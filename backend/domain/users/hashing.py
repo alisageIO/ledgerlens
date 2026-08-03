@@ -18,6 +18,8 @@ def hash_password(password: str) -> str:
 
 def verify_password(password: str, password_hash: str) -> bool:
     """Returns True if the plaintext password matches the stored bcrypt hash."""
+    if not password:
+        raise EmptyPasswordError(SYS_MSG.EMPTY_PASSWORD)
     if len(password.encode(_ENCODING)) > 72:
         raise ValidationError(SYS_MSG.PASSWORD_TOO_LONG)
     return bcrypt.checkpw(password.encode(_ENCODING), password_hash.encode(_ENCODING))

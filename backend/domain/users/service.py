@@ -14,21 +14,13 @@ class UserService:
 
     def create_user(self, email: str, password: str) -> User:
         """Hashes the password and persists a new User; never stores the raw value."""
-        user = User(email=email, password_hash=hash_password(password))
-        self.repository.session.add(user)
+        user = User(email=email.lower(), password_hash=hash_password(password))
         try:
-            self.repository.session.flush()
-            self.repository.session.refresh(user)
-            self.repository.session.commit()
-            return user
+            return self.repository.add(user)
         except IntegrityError as exc:
-            self.repository.session.rollback()
             err_msg = str(exc.orig).lower() if exc.orig else str(exc).lower()
             if "unique" in err_msg and "email" in err_msg:
                 raise DuplicateEmailError(SYS_MSG.DUPLICATE_EMAIL) from exc
-            raise
-        except Exception:
-            self.repository.session.rollback()
             raise
 
     def verify_password(self, user: User, password: str) -> bool:

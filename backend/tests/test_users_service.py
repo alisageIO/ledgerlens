@@ -88,6 +88,33 @@ def test_create_user_duplicate_email_raises_duplicate_email_error(
     assert "already exists" in str(exc_info.value)
 
 
+def test_create_user_lowercases_email(db_session: Session, user_service: UserService) -> None:
+    user = user_service.create_user(email="Mixed.Case@Example.COM", password="password123")
+
+    assert user.email == "mixed.case@example.com"
+
+
+def test_create_user_duplicate_email_different_case_raises_duplicate_email_error(
+    user_service: UserService,
+) -> None:
+    from domain.exceptions import DuplicateEmailError
+
+    user_service.create_user(email="Case@Example.com", password="password123")
+
+    with pytest.raises(DuplicateEmailError):
+        user_service.create_user(email="case@example.com", password="anotherpassword")
+
+
+def test_find_by_email_is_case_insensitive(db_session: Session, user_service: UserService) -> None:
+    user = user_service.create_user(email="Lookup@Example.com", password="password123")
+
+    repository = UserRepository(db_session)
+    matched = repository.find_by_email("lookup@example.com")
+
+    assert matched is not None
+    assert matched.id == user.id
+
+
 def test_user_repr_omits_email() -> None:
     import uuid
 
